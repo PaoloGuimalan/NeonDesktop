@@ -1,0 +1,157 @@
+@font-face {
+    font-family: 'NeonCal';
+    src: url('../../resources/fonts/Android101-El3e.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#div_splash{
+    background-color: transparent;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    /* max-width: 700px; */
+    /* max-height: 500px; */
+    position: absolute;
+    flex-direction: column;
+    /* overflow: hidden; */
+    /* background-image: radial-gradient(rgb(65, 65, 65) 1px, transparent 0);
+    background-size: 20px 20px;
+    background-position: -20px -20px; */
+    overflow-y: auto;
+    justify-content: center;
+    align-items: center;
+}
+
+#p_label_splash{
+    color: white;
+    /* position: absolute; */
+    font-size: 20px;
+    font-family: NeonCal;
+    text-shadow: 0px 0px 10px transparent;
+    cursor: pointer;
+    margin: 0;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: transparent; 
+}
+   
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+  
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+#div_neon_interface{
+    background-color: transparent;
+    width: 90%;
+    height: 90%;
+    max-width: 210px;
+    max-height: 210px;
+    border-radius: 210px;
+    border: solid 3px transparent;
+    box-shadow: 0px 0px 30px transparent, inset 0px 0px 70px transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#div_inner_neon{
+    background-color: transparent;
+    width: 95%;
+    height: 95%;
+    max-width: 180px;
+    max-height: 180px;
+    border-radius: 180px;
+    border-top: solid 5px transparent;
+    border-left: solid 5px transparent;
+    border-right: solid 5px transparent;
+    border-bottom: solid 5px transparent;
+    border-right-style: dashed;
+    border-bottom-style: dashed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* box-shadow: -10px 0px 30px white, inset 7px 7px 15px white; */
+}
+
+#div_inner2_neon{
+    background-color: transparent;
+    width: 95%;
+    height: 95%;
+    max-width: 155px;
+    max-height: 155px;
+    border-radius: 155px;
+    border-top: solid 5px white;
+    border-left: solid 5px white;
+    border-right: solid 5px white;
+    border-bottom: solid 5px white;
+    border-top-style: dashed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* box-shadow: -10px 0px 30px white, inset 7px 7px 15px white; */
+}
+
+#div_neon_stable_inner{
+    background-color: transparent;
+    width: 95%;
+    height: 95%;
+    max-width: 130px;
+    max-height: 130px;
+    border-radius: 130px;
+    border-top: solid 0px white;
+    border-left: solid 0px white;
+    border-right: solid 0px white;
+    border-bottom: solid 0px white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    /* border-style: dashed; */
+}
+
+#p_label_neon{
+    color: grey;
+    position: absolute;
+    font-size: 20px;
+    font-family: NeonCal;
+    text-shadow: 0px 0px 10px transparent;
+    cursor: pointer;
+}
+
+#div_startup_cmd{
+    background-color: transparent;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: calc(90% - 20px);
+    max-width: 500px;
+    height: 100%;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.p_startup_cmd{
+    margin: 0px;
+    color: white;
+    font-size: 15px;
+    font-family: NeonCal;
+    width: 100%;
+}
