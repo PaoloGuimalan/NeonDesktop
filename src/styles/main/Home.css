@@ -245,7 +245,8 @@
     position: absolute;
     top: 5px;
     /* right: 5px; */
-    right: -100%;
+    /* right: -100%; */
+    right: -1000px;
     width: calc(50% - 20px);
     height: 220px;
     max-width: 330px;
@@ -267,7 +268,8 @@
     position: absolute;
     bottom: 5px;
     /* right: 5px; */
-    right: -100%;
+    /* right: -100%; */
+    right: -1000px;
     width: calc(50% - 20px);
     height: 300px;
     max-width: 330px;
@@ -281,7 +283,8 @@
     position: absolute;
     top: 250px;
     /* right: 5px; */
-    right: -100%;
+    /* right: -100%; */
+    right: -1000px;
     width: calc(50% - 20px);
     height: calc(100% - 600px);
     max-width: 330px;

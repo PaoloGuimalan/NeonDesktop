@@ -1,4 +1,4 @@
-import { SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DATE_TIME, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SYSTEM_AUTH, SET_SYSTEM_CMD } from "../types/types"
+import { SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DATE_TIME, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from "../types/types"
 
 
 export const systemauthstate = {
@@ -47,6 +47,8 @@ export const setsystemcmd = (state = [], action) => {
         case SET_SYSTEM_CMD:
             var shifted = state.length >= 100? state.shift() : state;
             return state.concat(action.systemcmd);
+        case SET_SYSTEM_CMD_DEFAULT:
+            return action.systemcmd;
         default:
             return state;
     }

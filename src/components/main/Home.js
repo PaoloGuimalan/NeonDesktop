@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import FolderIcon from '@material-ui/icons/Folder'
 import FileIcon from '@material-ui/icons/InsertDriveFile'
 import UnknownIcon from '@material-ui/icons/BrokenImage'
-import { SET_CURRENT_PATH, SET_DATE_TIME, SET_SYSTEM_CMD } from '../../redux/types/types';import {
+import { SET_CURRENT_PATH, SET_DATE_TIME, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from '../../redux/types/types';import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
@@ -138,6 +138,23 @@ function Home() {
     ],
   }
 
+  const exitNeonDesktop = () => {
+    // dispatch({type: SET_SYSTEM_CMD_DEFAULT, systemcmd: []})
+    dispatch({type: SET_SYSTEM_AUTH, systemauth: {
+      status: false,
+      enabled: true,
+    }})
+    setTimeout(() => {
+      dispatch({type: SET_SYSTEM_AUTH, systemauth: {
+        status: false,
+        enabled: false,
+      }})
+    }, 5000)
+    setTimeout(() => {
+      ipcRenderer.send("closeApp", "")
+    }, 6000)
+  }
+
   return (
     <div id='div_home'>
         <motion.div
@@ -205,7 +222,7 @@ function Home() {
                 color: systemauth.enabled? "white" : "grey",
                 textShadow: systemauth.enabled? "0px 0px 10px white" : "0px 0px 10px transparent"
             }}
-            id='p_label_neon_home'>NEON</motion.p>
+            id='p_label_neon_home' onClick={() => { exitNeonDesktop() }}>NEON</motion.p>
         </motion.div>
         <motion.div
         animate={{
@@ -284,7 +301,7 @@ function Home() {
         </motion.div>
         <motion.div
         animate={{
-          right: systemauth.status? "5px" : "-100%"
+          right: systemauth.status? "5px" : "-1000px"
         }}
         transition={{
           duration: 1,
@@ -300,7 +317,7 @@ function Home() {
         </motion.div>
         <motion.div
         animate={{
-          right: systemauth.status? "5px" : "-100%"
+          right: systemauth.status? "5px" : "-1000px"
         }}
         transition={{
           duration: 1,
@@ -325,7 +342,7 @@ function Home() {
         </motion.div>
         <motion.div
         animate={{
-          right: systemauth.status? "5px" : "-100%"
+          right: systemauth.status? "5px" : "-1000px"
         }}
         transition={{
           duration: 1,
