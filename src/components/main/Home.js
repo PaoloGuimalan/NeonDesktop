@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion'
 import FolderIcon from '@material-ui/icons/Folder'
 import FileIcon from '@material-ui/icons/InsertDriveFile'
+import ExeIcon from '@material-ui/icons/SaveRounded'
 import UnknownIcon from '@material-ui/icons/BrokenImage'
 import { SET_CURRENT_PATH, SET_DATE_TIME, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from '../../redux/types/types';import {
   Chart as ChartJS,
@@ -57,6 +58,10 @@ function Home() {
     ipcRenderer.send('dirList', dirLink);
   };
 
+  const openFile = (path) => {
+    ipcRenderer.send('openFile', path)
+  }
+
   const goToPath = (path) => {
     var currentPath = currentDir;
     var newPath = currentPath.split("\\").length == 1? `${currentDir}${path}` : `${currentDir}\\${path}`
@@ -78,6 +83,7 @@ function Home() {
 
   useEffect(() => {
     setInterval(showTime, 1000)
+    // console.log(installedsoftwares.filter((fl, i) => fl.DisplayIcon))
   },[])
 
   function showTime(){
@@ -278,14 +284,16 @@ function Home() {
                 return(
                   <div key={i} className='div_folder_template' onClick={() => { goToPath(dr.fileName) }}>
                     <FolderIcon style={{color: "white", fontSize: "35px"}} />
+                    {/* <img src={dr.icon} /> */}
                     <p className='p_folder_label'>{dr.fileName}</p>
                   </div>
                 )
               }
               else if(dr.isFile){
                 return(
-                  <div key={i} className='div_folder_template' onClick={() => {  }}>
-                    <FileIcon style={{color: "white", fontSize: "35px"}} />
+                  <div key={i} className='div_folder_template' onClick={() => { openFile(dr.filepath) }}>
+                    {/* <FileIcon style={{color: "white", fontSize: "35px"}} /> */}
+                    <img src={dr.icon} className='img_files_indicator' />
                     <p className='p_folder_label'>{dr.fileName}</p>
                   </div>
                 )
@@ -293,6 +301,7 @@ function Home() {
               else{
                   <div key={i} className='div_folder_template' onClick={() => {  }}>
                     <UnknownIcon style={{color: "white", fontSize: "35px"}} />
+                    {/* <img src={dr.icon} className='img_files_indicator' /> */}
                     <p className='p_folder_label'>{dr.fileName}</p>
                   </div>
               }
@@ -328,14 +337,16 @@ function Home() {
             <p id='p_fs_label'>Softwares</p>
           </div>
           <div id='div_is_content'>
-            {installedsoftwares.map((isf, i) => {
+            {installedsoftwares.filter((fl, i) => fl.DisplayIcon).map((isf, i) => {
               if(isf.DisplayName){
-                return(
-                  <div key={i} className='div_folder_template' onClick={() => {  }}>
-                    <FileIcon style={{color: "white", fontSize: "35px"}} />
-                    <p className='p_folder_label'>{isf.DisplayName}</p>
-                  </div>
-                )
+                if(isf.DisplayIcon.includes(".exe")){
+                  return(
+                    <div key={i} className='div_folder_template' onClick={() => { openFile(isf.DisplayIcon.split(",")[0]) }}>
+                      <ExeIcon style={{color: "white", fontSize: "35px"}} />
+                      <p className='p_folder_label'>{isf.DisplayName}</p>
+                    </div>
+                  )
+                }
               }
             })}
           </div>

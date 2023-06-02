@@ -1,4 +1,4 @@
-import { SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DATE_TIME, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from "../types/types"
+import { SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DATE_TIME, SET_DEFAULT_DIRECTORIES, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from "../types/types"
 
 
 export const systemauthstate = {
@@ -27,6 +27,8 @@ export const setcurrentpath = (state = "", action) => {
 export const setdirectories = (state = [], action) => {
     switch(action.type){
         case SET_DIRECTORIES:
+            return state.concat(action.directories);
+        case SET_DEFAULT_DIRECTORIES:
             return action.directories;
         default:
             return state;

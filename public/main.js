@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, contextBridge, ipcRenderer } = require('electron')
+const { app, BrowserWindow, ipcMain, contextBridge, ipcRenderer, shell } = require('electron')
 const find = require('find-process');
 const fs = require("fs")
 
@@ -16,7 +16,7 @@ async function getDirectoryList(path){
   var newPath = path.split("\\").length == 1? `${path}` : `${path}\\`
 
   var dirs = fs.readdirSync(path, {withFileTypes: true})
-  data = dirs.map((dr, i) => ({fileName: dr.name, isFile: dr.isFile(), isDirectory: dr.isDirectory()}))
+  data = dirs.map((dr, i) => ({fileName: dr.name, isFile: dr.isFile(), isDirectory: dr.isDirectory(), filepath: `${newPath}${dr.name}`}))
 
   return data;
 }
@@ -40,6 +40,8 @@ function createWindow() {
   })
 
   win.removeMenu()
+
+  // win.webContents.openDevTools()
 
   win.loadURL(
     isDev
@@ -133,6 +135,14 @@ ipcMain.on('dirList', (event, arg) => {
   })
 })
 
+ipcMain.on('getFileIcon', (event, arg) => {
+  app.getFileIcon(arg.filepath).then((value) => {
+    event.sender.send('getFileIcon', {...arg, icon: value.toDataURL()})
+  }).catch((err) => {
+    console.log(err)
+  })
+})
+
 ipcMain.on('installedsoftwares', (event, arg) => {
   getInstalledSoftwares(arg).then((data) => {
     // console.log(data)
@@ -140,6 +150,10 @@ ipcMain.on('installedsoftwares', (event, arg) => {
   }).catch((err) => {
     console.log(err)
   })
+})
+
+ipcMain.on('openFile', (event, arg) => {
+  shell.openPath(arg)
 })
 
 ipcMain.on('closeApp', (evt, arg) => {

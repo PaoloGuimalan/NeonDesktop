@@ -7,9 +7,9 @@ import store from './redux/store/store';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Splash from './components/main/Splash';
 import { useEffect, useState } from 'react';
-import { SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SYSTEM_AUTH, SET_SYSTEM_CMD } from './redux/types/types';
+import { SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DEFAULT_DIRECTORIES, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SYSTEM_AUTH, SET_SYSTEM_CMD } from './redux/types/types';
 
-const { ipcRenderer } = window.require('electron');
+const { app, ipcRenderer } = window.require('electron');
 
 function App() {
 
@@ -55,10 +55,14 @@ function App() {
       initCurrentPath().then(() => {
         getData("C:\\").then(() => {
           initDirList().then(() => {
-            getInstalledSoftwares().then(() => {
-              initInstalledSoftwares().then(() => {
-
-              }).catch((err) => {  })
+            initGetFileIcon().then(() => {
+              getInstalledSoftwares().then(() => {
+                initInstalledSoftwares().then(() => {
+  
+                }).catch((err) => {  })
+              }).catch((err) => {
+  
+              })
             }).catch((err) => {
 
             })
@@ -112,13 +116,28 @@ function App() {
     setTimeout(() => {systemcmdreport("Drive C Initialized")}, 1500)
   }
 
+  const getFileIconData = (data) => {
+    ipcRenderer.send("getFileIcon", data)
+  }
+
+  const initGetFileIcon = async () => {
+    ipcRenderer.on('getFileIcon', (event, arg) => {
+      // setTimeout(() => {systemcmdreport(`${arg.fileName} scanned`)}, 1500)
+      dispatch({type: SET_DIRECTORIES, directories: arg})
+      // console.log(arg)
+    })
+  }
+
   const initDirList = async () => {
     ipcRenderer.on('dirList', (event, arg) => {
-        dispatch({type: SET_DIRECTORIES, directories: arg})
-        setTimeout(() => {systemcmdreport(`${arg.length} directories scanned in ${currentDir}`)}, 1500)
-        arg.map((dr, i) => {
-          setTimeout(() => {systemcmdreport(`${dr.fileName} scanned`)}, 1500)
+        dispatch({type: SET_DEFAULT_DIRECTORIES, directories: []})
+        arg.map((data, i) => {
+          getFileIconData(data)
         })
+        setTimeout(() => {systemcmdreport(`${arg.length} directories scanned in ${currentDir}`)}, 1500)
+        // arg.map((dr, i) => {
+        //   setTimeout(() => {systemcmdreport(`${dr.fileName} scanned`)}, 1500)
+        // })
     })
   }
 
