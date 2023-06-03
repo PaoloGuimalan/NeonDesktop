@@ -6,7 +6,7 @@ import FolderIcon from '@material-ui/icons/Folder'
 import FileIcon from '@material-ui/icons/InsertDriveFile'
 import ExeIcon from '@material-ui/icons/SaveRounded'
 import UnknownIcon from '@material-ui/icons/BrokenImage'
-import { SET_CURRENT_PATH, SET_DATE_TIME, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from '../../redux/types/types';import {
+import { SET_CURRENT_PATH, SET_DATE_TIME, SET_DEFAULT_COMMAND_LINE, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from '../../redux/types/types';import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
@@ -41,6 +41,7 @@ function Home() {
   const datetime = useSelector(state => state.datetime)
   const cpuregisters = useSelector(state => state.cpuregisters)
   const memoryregisters = useSelector(state => state.memoryregisters)
+  const commandline = useSelector(state => state.commandline)
   const dispatch = useDispatch()
 
   // const [datetime, setdatetime] = useState({
@@ -49,10 +50,16 @@ function Home() {
   // });
 
   const systemcmdref = useRef(null)
+  const cmdrref = useRef(null)
 
   useEffect(() => {
     systemcmdref.current.scrollTop = systemcmdref.current.scrollHeight
   },[systemcmd])
+
+  useEffect(() => {
+    cmdrref.current.scrollTop = cmdrref.current.scrollHeight
+    // console.log(commandline)
+  },[commandline])
 
   const getData = (dirLink) => {
     ipcRenderer.send('dirList', dirLink);
@@ -60,6 +67,25 @@ function Home() {
 
   const openFile = (path) => {
     ipcRenderer.send('openFile', path)
+  }
+
+  const executeCommandPrompt = (command) => {
+    ipcRenderer.send('executeCommand', command)
+  }
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      // console.log('do validate')
+      if(event.target.value.split("").length != 0){
+        if(event.target.value == "cls"){
+          dispatch({type: SET_DEFAULT_COMMAND_LINE, commandline: []})
+        }
+        else{
+          executeCommandPrompt(event.target.value)
+        }
+      }
+      event.currentTarget.value = "";
+    }
   }
 
   const goToPath = (path) => {
@@ -360,8 +386,19 @@ function Home() {
           delay: 2.5
         }}
         id='div_windows_cmd'>
-          <div id='div_hu_header'>
+          <div id='div_cmdr_header'>
             <p id='p_fs_label'>Command Line</p>
+          </div>
+          <div id='div_cmdr_container' ref={cmdrref}>
+            {commandline.map((cmdr, i) => {
+              return(
+                <div key={i} className='p_cmdr_format' dangerouslySetInnerHTML={{__html: cmdr}}></div>
+              )
+            })}
+            <div id='div_cmd_input_container'>
+              <p id='p_cmd_prompt_label'>Neon&gt;</p>
+              <input type='text' onKeyDown={handleKeyDown} id='input_cmd_prompt' />
+            </div>
           </div>
         </motion.div>
     </div>

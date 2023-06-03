@@ -7,7 +7,7 @@ import store from './redux/store/store';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Splash from './components/main/Splash';
 import { useEffect, useState } from 'react';
-import { SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DEFAULT_DIRECTORIES, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SYSTEM_AUTH, SET_SYSTEM_CMD } from './redux/types/types';
+import { SET_COMMAND_LINE, SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DEFAULT_DIRECTORIES, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SYSTEM_AUTH, SET_SYSTEM_CMD } from './redux/types/types';
 
 const { app, ipcRenderer } = window.require('electron');
 
@@ -56,12 +56,16 @@ function App() {
         getData("C:\\").then(() => {
           initDirList().then(() => {
             initGetFileIcon().then(() => {
-              getInstalledSoftwares().then(() => {
-                initInstalledSoftwares().then(() => {
-  
-                }).catch((err) => {  })
+              initCommandLine().then(() => {
+                getInstalledSoftwares().then(() => {
+                  initInstalledSoftwares().then(() => {
+    
+                  }).catch((err) => {  })
+                }).catch((err) => {
+    
+                })
               }).catch((err) => {
-  
+
               })
             }).catch((err) => {
 
@@ -149,6 +153,14 @@ function App() {
           setTimeout(() => {systemcmdreport(`${dr.DisplayName} software scanned`)}, 1500)
         })
         setTimeout(() => {systemcmdreport(`System Setup Complete`)}, 1500)
+    })
+  }
+
+  const initCommandLine = async () => {
+    ipcRenderer.on('executeCommand', (event, arg) => {
+      // alert(arg)
+      dispatch({type: SET_COMMAND_LINE, commandline: arg.replace(/(?:\r\n|\r|\n)/g, '<br>')})
+      // dispatch({type: SET_COMMAND_LINE, commandline: arg})
     })
   }
 

@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, contextBridge, ipcRenderer, shell } = require('electron')
 const find = require('find-process');
 const fs = require("fs")
+const exec = require("child_process").exec
 
 const path = require('path')
 const url = require("url")
@@ -23,6 +24,10 @@ async function getDirectoryList(path){
 
 async function getInstalledSoftwares(){
   return fetchInstalledSoftware.getAllInstalledSoftwareSync();
+}
+
+function commandLineExec(command, callback){
+  exec(command, function(error, stdout, stderr){ callback(stdout); });
 }
 
 function createWindow() {
@@ -149,6 +154,13 @@ ipcMain.on('installedsoftwares', (event, arg) => {
     event.sender.send('installedsoftwares', data)
   }).catch((err) => {
     console.log(err)
+  })
+})
+
+ipcMain.on('executeCommand', (event, arg) => {
+  commandLineExec(arg, (result) => {
+    // console.log(result)
+    event.sender.send('executeCommand', result)
   })
 })
 
