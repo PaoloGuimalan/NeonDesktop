@@ -7,7 +7,7 @@ import store from './redux/store/store';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Splash from './components/main/Splash';
 import { useEffect, useState } from 'react';
-import { SET_COMMAND_LINE, SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DEFAULT_DIRECTORIES, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SYSTEM_AUTH, SET_SYSTEM_CMD } from './redux/types/types';
+import { SET_BATTERY_STATUS, SET_COMMAND_LINE, SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DEFAULT_DIRECTORIES, SET_DEFAULT_SHORTCUTS_LIST, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SHORTCUTS_LIST, SET_SYSTEM_AUTH, SET_SYSTEM_CMD } from './redux/types/types';
 
 const { app, ipcRenderer } = window.require('electron');
 
@@ -17,6 +17,7 @@ function App() {
   const systemauth = useSelector(state => state.systemauth)
   const systemcmd = useSelector(state => state.systemcmd)
   const datetime = useSelector(state => state.datetime)
+  const batterstatus = useSelector(state => state.batterstatus)
   const dispatch = useDispatch()
 
   const [switchscreen, setswitchscreen] = useState(false)
@@ -57,12 +58,24 @@ function App() {
           initDirList().then(() => {
             initGetFileIcon().then(() => {
               initCommandLine().then(() => {
-                getInstalledSoftwares().then(() => {
-                  initInstalledSoftwares().then(() => {
-    
-                  }).catch((err) => {  })
+                initBatteryPower().then(() => {
+                  initShortcuts().then(() => {
+                    getShortcuts().then(() => {
+                      getInstalledSoftwares().then(() => {
+                        initInstalledSoftwares().then(() => {
+          
+                        }).catch((err) => {  })
+                      }).catch((err) => {
+          
+                      })
+                    }).catch((err) => {
+  
+                    })
+                  }).catch((err) => {
+  
+                  })
                 }).catch((err) => {
-    
+
                 })
               }).catch((err) => {
 
@@ -104,6 +117,47 @@ function App() {
     })
   }
 
+  const initBatteryPower = async () => {
+    // ipcRenderer.on("batterystatus", (event, arg) => {
+    //   // setTimeout(() => {systemcmdreport(`Scanning device hardwares`)}, 1500)
+    //   if(arg.trigger == "charging"){
+    //     dispatch({type: SET_BATTERY_STATUS, batterstatus: {
+    //       ...batterstatus,
+    //       power: arg.power
+    //     }})
+    //   }
+    //   else if(arg.trigger == "not-charging"){
+    //     dispatch({type: SET_BATTERY_STATUS, batterstatus: {
+    //       ...batterstatus,
+    //       power: arg.power
+    //     }})
+    //   }
+    // })
+    navigator.getBattery().then((battery) => {
+      // console.log(battery)
+      dispatch({type: SET_BATTERY_STATUS, batterstatus: {
+        power: battery.charging,
+        percentage: battery.level * 100
+      }})
+
+      battery.addEventListener('chargingchange', function() {
+        // console.log(battery)
+        dispatch({type: SET_BATTERY_STATUS, batterstatus: {
+          power: battery.charging,
+          percentage: battery.level * 100
+        }})
+      });
+
+      battery.addEventListener('levelchange', function() {
+        // console.log(battery)
+        dispatch({type: SET_BATTERY_STATUS, batterstatus: {
+          power: battery.charging,
+          percentage: battery.level * 100
+        }})
+      });
+    })
+  }
+
   const getData = async (dirLink) => {
     ipcRenderer.send('dirList', dirLink);
     setTimeout(() => {systemcmdreport("Checking Directories ...")}, 1500)
@@ -113,6 +167,11 @@ function App() {
     ipcRenderer.send('installedsoftwares', "");
     setTimeout(() => {systemcmdreport("Checking Installed Softwares ...")}, 1500)
   }; 
+
+  const getShortcuts = async () => {
+    ipcRenderer.send('getShortcuts', "Desktop");
+    setTimeout(() => {systemcmdreport("Scanning Desktop Shortcuts ...")}, 1500)
+  }
 
   const initCurrentPath = async () => {
     setTimeout(() => {systemcmdreport("Scanning Drive C ...")}, 1500)
@@ -162,6 +221,17 @@ function App() {
       dispatch({type: SET_COMMAND_LINE, commandline: arg.replace(/(?:\r\n|\r|\n)/g, '<br>')})
       // dispatch({type: SET_COMMAND_LINE, commandline: arg})
     })
+  }
+
+  const initShortcuts = async () => {
+    ipcRenderer.on('getShortcuts', (event, arg) => {
+      dispatch({type: SET_DEFAULT_SHORTCUTS_LIST, shortcutslist: []})
+      arg.map((data, i) => {
+        // getFileIconData(data)
+        dispatch({type: SET_SHORTCUTS_LIST, shortcutslist: data})
+      })
+      setTimeout(() => {systemcmdreport(`${arg.length} shortcuts retrieved`)}, 1500)
+  })
   }
 
   return (

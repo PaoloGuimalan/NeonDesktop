@@ -7,8 +7,13 @@ const path = require('path')
 const url = require("url")
 const isDev = require('electron-is-dev')
 const os = require("os-utils")
+const osf = require("os")
+const getPath = require("platform-folders")
 
-const fetchInstalledSoftware = require("fetch-installed-software")
+const powerMonitor = require("electron").powerMonitor
+
+const fetchInstalledSoftware = require("fetch-installed-software");
+const { electron } = require('process');
 
 require('@electron/remote/main').initialize()
 
@@ -18,6 +23,18 @@ async function getDirectoryList(path){
 
   var dirs = fs.readdirSync(path, {withFileTypes: true})
   data = dirs.map((dr, i) => ({fileName: dr.name, isFile: dr.isFile(), isDirectory: dr.isDirectory(), filepath: `${newPath}${dr.name}`}))
+
+  return data;
+}
+
+async function getShortcutsList(pathd){
+  var data = [];
+  var newPath = path.join(osf.homedir(), pathd)
+
+  // console.log(newPath)
+
+  var dirs = fs.readdirSync(newPath, {withFileTypes: true})
+  data = dirs.map((dr, i) => ({fileName: dr.name, isFile: dr.isFile(), isDirectory: dr.isDirectory(), filepath: `${newPath}\\${dr.name}`}))
 
   return data;
 }
@@ -80,6 +97,22 @@ function createWindow() {
     //   })
     // })
   },3000)
+
+  // powerMonitor.on('on-ac', () => {
+  //   // console.log('The system is on AC Power (charging)');
+  //   win.webContents.send('batterystatus', {
+  //     trigger: "charging",
+  //     power: "charging"
+  //   })
+  // });
+  
+  // powerMonitor.on('on-battery', () => {
+  //   // console.log('The system is on Battery Power');
+  //   win.webContents.send('batterystatus', {
+  //     trigger: "not-charging",
+  //     power: "not-charging"
+  //   })
+  // });
 
   // const win2 = new BrowserWindow({
   //   width: 400,
@@ -157,6 +190,15 @@ ipcMain.on('installedsoftwares', (event, arg) => {
   })
 })
 
+ipcMain.on('getShortcuts', (event, arg) => {
+  getShortcutsList(arg).then((data) => {
+    // console.log(data)
+    event.sender.send('getShortcuts', data)
+  }).catch((err) => {
+    console.log(err)
+  })
+})
+
 ipcMain.on('executeCommand', (event, arg) => {
   commandLineExec(arg, (result) => {
     // console.log(result)
@@ -167,6 +209,14 @@ ipcMain.on('executeCommand', (event, arg) => {
 ipcMain.on('openFile', (event, arg) => {
   shell.openPath(arg)
 })
+
+powerMonitor.on('on-ac', () => {
+  // console.log('The system is on AC Power (charging)');
+});
+
+powerMonitor.on('on-battery', () => {
+  // console.log('The system is on Battery Power');
+});
 
 ipcMain.on('closeApp', (evt, arg) => {
   app.exit(0)

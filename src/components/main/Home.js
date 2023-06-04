@@ -6,6 +6,9 @@ import FolderIcon from '@material-ui/icons/Folder'
 import FileIcon from '@material-ui/icons/InsertDriveFile'
 import ExeIcon from '@material-ui/icons/SaveRounded'
 import UnknownIcon from '@material-ui/icons/BrokenImage'
+import BatteryNotCharging from '@material-ui/icons/BatteryStd'
+import BatteryCharging from '@material-ui/icons/BatteryChargingFull'
+import BatteryAlert from '@material-ui/icons/BatteryAlert'
 import { SET_CURRENT_PATH, SET_DATE_TIME, SET_DEFAULT_COMMAND_LINE, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from '../../redux/types/types';import {
   Chart as ChartJS,
   CategoryScale,
@@ -42,6 +45,8 @@ function Home() {
   const cpuregisters = useSelector(state => state.cpuregisters)
   const memoryregisters = useSelector(state => state.memoryregisters)
   const commandline = useSelector(state => state.commandline)
+  const shortcutslist = useSelector(state => state.shortcutslist)
+  const batterystatus = useSelector(state => state.batterystatus)
   const dispatch = useDispatch()
 
   // const [datetime, setdatetime] = useState({
@@ -269,6 +274,94 @@ function Home() {
             <p id='p_time_label'>{datetime.time}</p>
             <p id='p_date_label'>{datetime.date}</p>
           </div>
+          <div id='div_battery_container'>
+            <div id='div_battery_icon_label'>
+              {batterystatus.power? (
+                <BatteryCharging style={{fontSize: "25px", color: "white"}} />
+              ) : (
+                batterystatus.percentage <= 20? (
+                  <BatteryAlert style={{fontSize: "25px", color: "white"}} />
+                ) : (
+                  <BatteryNotCharging style={{fontSize: "25px", color: "white"}} />
+                )
+              )}
+              <p id='p_batterylevel_label'>{batterystatus.percentage.toFixed(0)}% {batterystatus.power? "Charging" : "On Battery"}</p>
+            </div>
+            <div id='div_battery_level_bar_outer'>
+              <motion.div
+              animate={{
+                width: `${batterystatus.percentage}%`
+              }}
+              id='div_battery_level_bar_inner'></motion.div>
+            </div>
+          </div>
+        </motion.div>
+        <motion.div
+        animate={{
+          top: systemauth.status? "5px" : "-100%"
+        }}
+        transition={{
+          duration: 1,
+          delay: systemauth.status? 3 : 0
+        }}
+        id='div_shortcut_widget'>
+          <div id='div_shortcut_container'>
+            <div id='div_shortcut_header'>
+              <p id='p_shortcut_header_label'>Shortcuts</p>
+            </div>
+            <div id='div_shortcut_list'>
+              {shortcutslist.map((scl, i) => {
+                if(scl.isDirectory){
+                  return(
+                    <div key={i} className='div_shortcuts_template' onClick={() => { goToPath(scl.fileName) }}>
+                      <FolderIcon style={{color: "black", fontSize: "35px"}} />
+                      {/* <img src={scl.icon} /> */}
+                      <p className='p_folder_shortcut_label'>{scl.fileName}</p>
+                    </div>
+                  )
+                }
+                else if(scl.isFile){
+                  return(
+                    <div key={i} className='div_shortcuts_template' onClick={() => { openFile(scl.filepath) }}>
+                      <FileIcon style={{color: "black", fontSize: "35px"}} />
+                      {/* <img src={scl.icon} className='img_files_indicator' /> */}
+                      <p className='p_folder_shortcut_label'>{scl.fileName}</p>
+                    </div>
+                  )
+                }
+                else{
+                    <div key={i} className='div_shortcuts_template' onClick={() => {  }}>
+                      <UnknownIcon style={{color: "black", fontSize: "35px"}} />
+                      {/* <img src={scl.icon} className='img_files_indicator' /> */}
+                      <p className='p_folder_shortcut_label'>{scl.fileName}</p>
+                    </div>
+                }
+              })}
+            </div>
+          </div>
+          {/* <div id='div_slanted_status_container'>
+            <div id='div_battery_icon_container'>
+              {batterystatus.power? (
+                <BatteryCharging style={{fontSize: "25px", color: "white"}} />
+              ) : (
+                batterystatus.percentage <= 20? (
+                  <BatteryAlert style={{fontSize: "25px", color: "white"}} />
+                ) : (
+                  <BatteryNotCharging style={{fontSize: "25px", color: "white"}} />
+                )
+              )}
+              <p id='p_batterylevel_label'>{batterystatus.percentage.toFixed(0)}%</p>
+            </div>
+            <div id='div_battery_level_bar_container'>
+              <div id='div_battery_level_bar_outer'>
+                  <motion.div
+                  animate={{
+                    height: batterystatus.percentage
+                  }}
+                  id='div_battery_level_bar_inner'></motion.div>
+              </div>
+            </div>
+          </div> */}
         </motion.div>
         <motion.div
         animate={{
