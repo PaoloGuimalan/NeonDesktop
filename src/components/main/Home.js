@@ -9,7 +9,9 @@ import UnknownIcon from '@material-ui/icons/BrokenImage'
 import BatteryNotCharging from '@material-ui/icons/BatteryStd'
 import BatteryCharging from '@material-ui/icons/BatteryChargingFull'
 import BatteryAlert from '@material-ui/icons/BatteryAlert'
-import { SET_CURRENT_PATH, SET_DATE_TIME, SET_DEFAULT_COMMAND_LINE, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from '../../redux/types/types';import {
+import MenuIcon from '@material-ui/icons/Apps'
+import MapIcon from '@material-ui/icons/Map'
+import { SET_COMMAND_LINE, SET_CURRENT_PATH, SET_DATE_TIME, SET_DEFAULT_COMMAND_LINE, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from '../../redux/types/types';import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
@@ -49,6 +51,44 @@ function Home() {
   const batterystatus = useSelector(state => state.batterystatus)
   const dispatch = useDispatch()
 
+  const defaultCircleMenuIterable = [
+    {
+      available: true,
+      component: <MenuIcon style={{color: "white", fontSize: "35px"}} />,
+      action: () => {  }
+    },
+    {
+      available: true,
+      component: <MapIcon style={{color: "white", fontSize: "35px"}} />,
+      action: () => {  }
+    },
+    {
+      available: true,
+      component: <FolderIcon style={{color: "white", fontSize: "35px"}} />,
+      action: () => {  }
+    },
+    {
+      available: false,
+      component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
+      action: () => {  }
+    },
+    {
+      available: false,
+      component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
+      action: () => {  }
+    },
+    {
+      available: false,
+      component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
+      action: () => {  }
+    },
+    {
+      available: false,
+      component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
+      action: () => {  }
+    }
+  ]
+
   // const [datetime, setdatetime] = useState({
   //   time: "",
   //   date: ""
@@ -56,6 +96,17 @@ function Home() {
 
   const systemcmdref = useRef(null)
   const cmdrref = useRef(null)
+
+  useEffect(() => {
+    setTimeout(() => {
+      initcmdwelcomemessage()
+    },6000)
+  },[])
+
+  const initcmdwelcomemessage = () => {
+    var message = "<h1>Welcome, System is now ready for use.</h1> \n Neon Desktop Beta version 1.1.0";
+    dispatch({type: SET_COMMAND_LINE, commandline: message.replace(/(?:\r\n|\r|\n)/g, '<br>')})
+  }
 
   useEffect(() => {
     systemcmdref.current.scrollTop = systemcmdref.current.scrollHeight
@@ -298,6 +349,52 @@ function Home() {
         </motion.div>
         <motion.div
         animate={{
+          rotate: -360,
+          scale: systemauth.status? 1 : 0
+        }}
+        transition={{
+          delay: systemauth.status? 1 : 0,
+          duration: 50,
+          repeat: Infinity
+        }}
+        id='div_circle_menu'>
+          {defaultCircleMenuIterable.map((btns, i) => {
+            return(
+              <motion.button
+              onClick={btns.action}
+              initial={{
+                left: (50 - 50*Math.cos(-0.5 * Math.PI - 2*(1/defaultCircleMenuIterable.length)*i*Math.PI)).toFixed(4) + "%",
+                top: (50 - 50*Math.sin(-0.5 * Math.PI - 2*(1/defaultCircleMenuIterable.length)*i*Math.PI)).toFixed(4) + "%",
+                scale: 0
+              }}
+              animate={{
+                scale: systemauth.status? 1 : 0,
+                opacity: btns.available? 1 : 0.8
+              }}
+              transition={{
+                delay: 1,
+                duration: 1
+              }}
+              className='btns_circle_menu'>
+                <motion.div
+                animate={{
+                  rotate: 360,
+                  boxShadow: btns.available? "0px 0px 10px white, inset 0px 0px 50px white" : "0px 0px 10px red, inset 0px 0px 50px red"
+                }}
+                transition={{
+                  delay: 0,
+                  duration: 50,
+                  repeat: Infinity
+                }}
+                className='div_circle_btn_holder'>
+                  {btns.component}
+                </motion.div>
+              </motion.button>
+            )
+          })}
+        </motion.div>
+        <motion.div
+        animate={{
           top: systemauth.status? "5px" : "-100%"
         }}
         transition={{
@@ -480,7 +577,7 @@ function Home() {
         }}
         id='div_windows_cmd'>
           <div id='div_cmdr_header'>
-            <p id='p_fs_label'>Command Line</p>
+            <p id='p_cmdr_label'>Command Line</p>
           </div>
           <div id='div_cmdr_container' ref={cmdrref}>
             {commandline.map((cmdr, i) => {
@@ -493,6 +590,7 @@ function Home() {
               <input type='text' onKeyDown={handleKeyDown} id='input_cmd_prompt' />
             </div>
           </div>
+          <div id='div_cmdr_footer'></div>
         </motion.div>
     </div>
   )
