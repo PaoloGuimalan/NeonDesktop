@@ -21,6 +21,7 @@
     justify-content: center;
     align-items: center;
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 #div_neon_interface_home{
@@ -630,4 +631,69 @@
     padding: 0px;
     border-radius: 50px;
     box-shadow: 0px 0px 10px grey, inset 0px 0px 50px grey;
+}
+
+#div_confirmexit_container{
+    /* background-color: rgba(255, 255, 255, 0.8); */
+    background-color: rgba(40, 40, 40, 0.5);
+    width: 90%;
+    max-width: 250px;
+    position: absolute;
+    bottom: -1000px;
+    right: 360px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    color: white;
+}
+
+#div_confirmexit_header{
+    background-color: transparent;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+#p_confirmexit_label{
+    font-size: 13px;
+    margin: 0px;
+    font-family: NeonCal;
+}
+
+#div_confirmexit_body{
+    background-color: transparent;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+#div_confirmexit_body_content{
+    font-size: 10px;
+    font-family: NeonCal;
+}
+
+#div_confirmexit_navigations{
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn_confirmexit{
+    width: 100px;
+    height: 25px;
+    font-size: 12px;
+    font-family: NeonCal;
+    border: none;
+    cursor: pointer;
+}
+
+.btn_confirmexit:first-of-type{
+    background-color: white;
+    color: black;
+}
+
+.btn_confirmexit:nth-of-type(2){
+    background-color: red;
+    color: white;
 }

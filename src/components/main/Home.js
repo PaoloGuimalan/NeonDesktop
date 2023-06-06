@@ -51,39 +51,48 @@ function Home() {
   const batterystatus = useSelector(state => state.batterystatus)
   const dispatch = useDispatch()
 
+  const [confirmexitmodaltoggle, setconfirmexitmodaltoggle] = useState(false)
+
   const defaultCircleMenuIterable = [
     {
       available: true,
+      title: "Menu",
       component: <MenuIcon style={{color: "white", fontSize: "35px"}} />,
       action: () => { systemcmdreport("warning","Menu still in development") }
     },
     {
       available: true,
+      title: "Map",
       component: <MapIcon style={{color: "white", fontSize: "35px"}} />,
       action: () => { systemcmdreport("warning","Map still in development") }
     },
     {
       available: true,
+      title: "File Explorer",
       component: <FolderIcon style={{color: "white", fontSize: "35px"}} />,
       action: () => { openFile("C:\\") }
     },
     {
       available: false,
+      title: "Unavailable",
       component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
       action: () => { systemcmdreport("error", "Module Unavailable") }
     },
     {
       available: false,
+      title: "Unavailable",
       component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
       action: () => {  systemcmdreport("error", "Module Unavailable")}
     },
     {
       available: false,
+      title: "Unavailable",
       component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
       action: () => { systemcmdreport("error", "Module Unavailable") }
     },
     {
       available: false,
+      title: "Unavailable",
       component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
       action: () => {  systemcmdreport("error", "Module Unavailable")}
     }
@@ -236,6 +245,10 @@ function Home() {
     ],
   }
 
+  const confirmexitmodal = () => {
+    setconfirmexitmodaltoggle(true)
+  }
+
   const exitNeonDesktop = () => {
     // dispatch({type: SET_SYSTEM_CMD_DEFAULT, systemcmd: []})
     dispatch({type: SET_SYSTEM_AUTH, systemauth: {
@@ -249,7 +262,8 @@ function Home() {
       }})
     }, 5000)
     setTimeout(() => {
-      ipcRenderer.send("closeApp", "")
+      executeCommandPrompt("shutdown -s")
+      // ipcRenderer.send("closeApp", "")
     }, 6000)
   }
 
@@ -320,7 +334,7 @@ function Home() {
                 color: systemauth.enabled? "white" : "grey",
                 textShadow: systemauth.enabled? "0px 0px 10px white" : "0px 0px 10px transparent"
             }}
-            id='p_label_neon_home' onClick={() => { exitNeonDesktop() }}>NEON</motion.p>
+            id='p_label_neon_home' onClick={() => { confirmexitmodal() }}>NEON</motion.p>
         </motion.div>
         <motion.div
         animate={{
@@ -371,6 +385,7 @@ function Home() {
           {defaultCircleMenuIterable.map((btns, i) => {
             return(
               <motion.button
+              title={btns.title}
               onClick={btns.action}
               initial={{
                 left: (50 - 50*Math.cos(-0.5 * Math.PI - 2*(1/defaultCircleMenuIterable.length)*i*Math.PI)).toFixed(4) + "%",
@@ -405,6 +420,25 @@ function Home() {
         </motion.div>
         <motion.div
         animate={{
+          bottom: confirmexitmodaltoggle? "5px" : "-1000px"
+        }}
+        transition={{
+          duration: 0.4
+        }}
+        id='div_confirmexit_container'>
+          <div id='div_confirmexit_header'>
+            <p id='p_confirmexit_label'>Warning</p>
+          </div>
+          <div id='div_confirmexit_body'>
+            <p id='div_confirmexit_body_content'>Are you sure you want to execute system shutdown?</p>
+          </div>
+          <div id='div_confirmexit_navigations'>
+            <button className='btn_confirmexit' onClick={() => { exitNeonDesktop() }}>Proceed</button>
+            <button className='btn_confirmexit' onClick={() => { setconfirmexitmodaltoggle(false) }}>Cancel</button>
+          </div>
+        </motion.div>
+        <motion.div
+        animate={{
           top: systemauth.status? "5px" : "-100%"
         }}
         transition={{
@@ -420,7 +454,7 @@ function Home() {
               {shortcutslist.map((scl, i) => {
                 if(scl.isDirectory){
                   return(
-                    <div key={i} className='div_shortcuts_template' onClick={() => { goToPath(scl.fileName) }}>
+                    <div key={i} title={scl.fileName} className='div_shortcuts_template' onClick={() => { goToPath(scl.fileName) }}>
                       <FolderIcon style={{color: "black", fontSize: "35px"}} />
                       {/* <img src={scl.icon} /> */}
                       <p className='p_folder_shortcut_label'>{scl.fileName}</p>
@@ -429,7 +463,7 @@ function Home() {
                 }
                 else if(scl.isFile){
                   return(
-                    <div key={i} className='div_shortcuts_template' onClick={() => { openFile(scl.filepath) }}>
+                    <div key={i} title={scl.fileName} className='div_shortcuts_template' onClick={() => { openFile(scl.filepath) }}>
                       <FileIcon style={{color: "black", fontSize: "35px"}} />
                       {/* <img src={scl.icon} className='img_files_indicator' /> */}
                       <p className='p_folder_shortcut_label'>{scl.fileName}</p>
@@ -437,7 +471,7 @@ function Home() {
                   )
                 }
                 else{
-                    <div key={i} className='div_shortcuts_template' onClick={() => {  }}>
+                    <div key={i} title={scl.fileName} className='div_shortcuts_template' onClick={() => {  }}>
                       <UnknownIcon style={{color: "black", fontSize: "35px"}} />
                       {/* <img src={scl.icon} className='img_files_indicator' /> */}
                       <p className='p_folder_shortcut_label'>{scl.fileName}</p>
@@ -571,7 +605,7 @@ function Home() {
               if(isf.DisplayName){
                 if(isf.DisplayIcon.includes(".exe")){
                   return(
-                    <div key={i} className='div_folder_template' onClick={() => { openFile(isf.DisplayIcon.split(",")[0]) }}>
+                    <div key={i} title={isf.DisplayName} className='div_folder_template' onClick={() => { openFile(isf.DisplayIcon.split(",")[0]) }}>
                       <ExeIcon style={{color: "white", fontSize: "35px"}} />
                       <p className='p_folder_label'>{isf.DisplayName}</p>
                     </div>

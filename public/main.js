@@ -50,6 +50,7 @@ function commandLineExec(command, callback){
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
+    type: 'desktop',
     width: 800,
     height: 700,
     frame: false,
