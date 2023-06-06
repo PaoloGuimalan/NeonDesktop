@@ -36,7 +36,7 @@ function App() {
   },[systemauth.enabled])
 
   useEffect(() => {
-    if(systemcmd[systemcmd.length - 1] == `System Setup Complete`){
+    if(systemcmd[systemcmd.length - 1]?.report == `System Setup Complete`){
       dispatch({type: SET_SYSTEM_AUTH, systemauth: {
         status: true,
         enabled: true,
@@ -47,12 +47,15 @@ function App() {
     }
   },[systemcmd])
 
-  var systemcmdreport = (report) => {
-    dispatch({type: SET_SYSTEM_CMD, systemcmd: report})
+  var systemcmdreport = (status, report) => {
+    dispatch({type: SET_SYSTEM_CMD, systemcmd: {
+      status: status,
+      report: report
+    }})
   }
 
   const initModules = () => {
-    setTimeout(() => {systemcmdreport("Initializing Modules...")}, 1500)
+    setTimeout(() => {systemcmdreport("normal","Initializing Modules...")}, 1500)
       initCurrentPath().then(() => {
         getData("C:\\").then(() => {
           initDirList().then(() => {
@@ -94,7 +97,7 @@ function App() {
       })
 
       //CPU separate init
-      setTimeout(() => {systemcmdreport(`Scanning device hardwares`)}, 1500)
+      setTimeout(() => {systemcmdreport("normal",`Scanning device hardwares`)}, 1500)
       initCPU().then(() => {
 
       }).catch((err) => {
@@ -160,23 +163,23 @@ function App() {
 
   const getData = async (dirLink) => {
     ipcRenderer.send('dirList', dirLink);
-    setTimeout(() => {systemcmdreport("Checking Directories ...")}, 1500)
+    setTimeout(() => {systemcmdreport("normal","Checking Directories ...")}, 1500)
   };
 
   const getInstalledSoftwares = async () => {
     ipcRenderer.send('installedsoftwares', "");
-    setTimeout(() => {systemcmdreport("Checking Installed Softwares ...")}, 1500)
+    setTimeout(() => {systemcmdreport("normal","Checking Installed Softwares ...")}, 1500)
   }; 
 
   const getShortcuts = async () => {
     ipcRenderer.send('getShortcuts', "Desktop");
-    setTimeout(() => {systemcmdreport("Scanning Desktop Shortcuts ...")}, 1500)
+    setTimeout(() => {systemcmdreport("normal","Scanning Desktop Shortcuts ...")}, 1500)
   }
 
   const initCurrentPath = async () => {
-    setTimeout(() => {systemcmdreport("Scanning Drive C ...")}, 1500)
+    setTimeout(() => {systemcmdreport("normal","Scanning Drive C ...")}, 1500)
     dispatch({type: SET_CURRENT_PATH, currentpath: "C:\\"})
-    setTimeout(() => {systemcmdreport("Drive C Initialized")}, 1500)
+    setTimeout(() => {systemcmdreport("normal","Drive C Initialized")}, 1500)
   }
 
   const getFileIconData = (data) => {
@@ -197,7 +200,7 @@ function App() {
         arg.map((data, i) => {
           getFileIconData(data)
         })
-        setTimeout(() => {systemcmdreport(`${arg.length} directories scanned in ${currentDir}`)}, 1500)
+        setTimeout(() => {systemcmdreport("normal",`${arg.length} directories scanned in ${currentDir}`)}, 1500)
         // arg.map((dr, i) => {
         //   setTimeout(() => {systemcmdreport(`${dr.fileName} scanned`)}, 1500)
         // })
@@ -207,11 +210,11 @@ function App() {
   const initInstalledSoftwares = async () => {
     ipcRenderer.on('installedsoftwares', (event, arg) => {
         dispatch({type: SET_INSTALLED_SOFTWARES, installedsoftwares: arg})
-        setTimeout(() => {systemcmdreport(`${arg.length} Installed Softwares detected`)}, 1500)
+        setTimeout(() => {systemcmdreport("normal",`${arg.length} Installed Softwares detected`)}, 1500)
         arg.map((dr, i) => {
-          setTimeout(() => {systemcmdreport(`${dr.DisplayName} software scanned`)}, 1500)
+          setTimeout(() => {systemcmdreport("normal",`${dr.DisplayName} software scanned`)}, 1500)
         })
-        setTimeout(() => {systemcmdreport(`System Setup Complete`)}, 1500)
+        setTimeout(() => {systemcmdreport("success",`System Setup Complete`)}, 1500)
     })
   }
 
@@ -230,7 +233,7 @@ function App() {
         // getFileIconData(data)
         dispatch({type: SET_SHORTCUTS_LIST, shortcutslist: data})
       })
-      setTimeout(() => {systemcmdreport(`${arg.length} shortcuts retrieved`)}, 1500)
+      setTimeout(() => {systemcmdreport("normal",`${arg.length} shortcuts retrieved`)}, 1500)
   })
   }
 

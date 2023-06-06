@@ -20,7 +20,10 @@ function Splash() {
         status: false,
         enabled: true,
       }})
-      dispatch({type: SET_SYSTEM_CMD, systemcmd: "System starting..."})
+      dispatch({type: SET_SYSTEM_CMD, systemcmd: {
+        status: "normal",
+        report: "System starting..."
+      }})
     }
   }
 
@@ -101,7 +104,11 @@ function Splash() {
         id='div_startup_cmd'>
           {systemcmd.map((scmd, i) => {
             return(
-              <p key={i} className='p_startup_cmd'>{scmd}</p>
+              <motion.p
+              animate={{
+                color: scmd.status == "normal"? "white" : scmd.status == "success"? "lime" : scmd.status == "warning" ? "orange" : scmd.status == "error"? "red" : "normal"
+              }}
+              key={i} className='p_startup_cmd'>{scmd.report}</motion.p>
             )
           })}
         </motion.div>

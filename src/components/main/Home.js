@@ -55,37 +55,37 @@ function Home() {
     {
       available: true,
       component: <MenuIcon style={{color: "white", fontSize: "35px"}} />,
-      action: () => {  }
+      action: () => { systemcmdreport("warning","Menu still in development") }
     },
     {
       available: true,
       component: <MapIcon style={{color: "white", fontSize: "35px"}} />,
-      action: () => {  }
+      action: () => { systemcmdreport("warning","Map still in development") }
     },
     {
       available: true,
       component: <FolderIcon style={{color: "white", fontSize: "35px"}} />,
-      action: () => {  }
+      action: () => { openFile("C:\\") }
     },
     {
       available: false,
       component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
-      action: () => {  }
+      action: () => { systemcmdreport("error", "Module Unavailable") }
     },
     {
       available: false,
       component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
-      action: () => {  }
+      action: () => {  systemcmdreport("error", "Module Unavailable")}
     },
     {
       available: false,
       component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
-      action: () => {  }
+      action: () => { systemcmdreport("error", "Module Unavailable") }
     },
     {
       available: false,
       component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
-      action: () => {  }
+      action: () => {  systemcmdreport("error", "Module Unavailable")}
     }
   ]
 
@@ -106,6 +106,13 @@ function Home() {
   const initcmdwelcomemessage = () => {
     var message = "<h1>Welcome, System is now ready for use.</h1> \n Neon Desktop Beta version 1.1.0";
     dispatch({type: SET_COMMAND_LINE, commandline: message.replace(/(?:\r\n|\r|\n)/g, '<br>')})
+  }
+
+  var systemcmdreport = (status, report) => {
+    dispatch({type: SET_SYSTEM_CMD, systemcmd: {
+      status: status,
+      report: report
+    }})
   }
 
   useEffect(() => {
@@ -135,6 +142,9 @@ function Home() {
       if(event.target.value.split("").length != 0){
         if(event.target.value == "cls"){
           dispatch({type: SET_DEFAULT_COMMAND_LINE, commandline: []})
+        }
+        else if(event.target.value == "init"){
+          initcmdwelcomemessage()
         }
         else{
           executeCommandPrompt(event.target.value)
@@ -472,7 +482,11 @@ function Home() {
           <div id='div_inner_system_cmd' ref={systemcmdref}>
             {systemcmd.map((scmd, i) => {
               return(
-                <p key={i} id='p_system_cmd'>{scmd}</p>
+                <motion.p
+                animate={{
+                  color: scmd.status == "normal"? "white" : scmd.status == "success"? "lime" : scmd.status == "warning" ? "orange" : scmd.status == "error"? "red" : "normal"
+                }}
+                key={i} id='p_system_cmd'>{scmd.report}</motion.p>
               )
             })}
           </div>
