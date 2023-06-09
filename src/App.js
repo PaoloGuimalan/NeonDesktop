@@ -33,6 +33,12 @@ function App() {
     if(systemauth.enabled){
       initModules()
     }
+
+    if(!systemauth.enabled && !systemauth.status){
+      setTimeout(() => {
+        setswitchscreen(false)
+      }, 5000)
+    }
   },[systemauth.enabled])
 
   useEffect(() => {
@@ -241,7 +247,7 @@ function App() {
     <div id='div_app'>
       <Routes>
         <Route path='/' element={switchscreen? <Navigate to='/home' /> : <Splash />} />
-        <Route path='/home' element={switchscreen? <Home /> : <Navigate to='/login' />} />
+        <Route path='/home' element={switchscreen? <Home /> : <Navigate to='/' />} />
       </Routes>
     </div>
   );

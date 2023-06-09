@@ -250,7 +250,7 @@ function Home() {
   }
 
   const exitNeonDesktop = () => {
-    // dispatch({type: SET_SYSTEM_CMD_DEFAULT, systemcmd: []})
+    setconfirmexitmodaltoggle(false)
     dispatch({type: SET_SYSTEM_AUTH, systemauth: {
       status: false,
       enabled: true,
@@ -262,7 +262,8 @@ function Home() {
       }})
     }, 5000)
     setTimeout(() => {
-      executeCommandPrompt("shutdown -s")
+      dispatch({type: SET_SYSTEM_CMD_DEFAULT, systemcmd: []})
+      executeCommandPrompt("shutdown -s -t 3")
       // ipcRenderer.send("closeApp", "")
     }, 6000)
   }
