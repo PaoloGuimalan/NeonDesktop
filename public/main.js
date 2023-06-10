@@ -215,13 +215,32 @@ ipcMain.on('openFile', (event, arg) => {
 ipcMain.on('systemvolume', (event, arg) => {
   if(arg == "init"){
     const getvolume = audio.volume()
-    console.log(`from init ${getvolume}`)
+    // console.log(`from init ${getvolume}`)
     event.sender.send('systemvolume', getvolume)
   }
   else{
-    const setvolume = audio.volume(arg)
-    console.log(`from set ${setvolume}`)
-    event.sender.send('systemvolume', setvolume)
+    audio.volume(parseInt(arg))
+    // console.log(typeof arg)
+    event.sender.send('systemvolume', arg)
+  }
+})
+
+ipcMain.on('systembrightness', (event, arg) => {
+  if(arg == "init"){
+    display.brightness().then((b) => {
+      // console.log(`from init ${b}`)
+      event.sender.send('systembrightness', b)
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
+  else{
+    display.brightness(parseFloat(arg)).then(() => {
+      // console.log(typeof arg)
+      event.sender.send('systembrightness', arg)
+    }).catch((err) => {
+      console.log(err)
+    })
   }
 })
 

@@ -12,11 +12,12 @@
     max-width: 250px;
     position: absolute;
     bottom: -1000px;
-    right: 360px;
+    /* left: 360px; */
     display: flex;
     flex-direction: column;
     padding: 10px;
     color: white;
+    z-index: 1;
 }
 
 #div_confirmexit_header{

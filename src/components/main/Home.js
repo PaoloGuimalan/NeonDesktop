@@ -19,6 +19,7 @@ import DesktopFileSystem from '../widgets/DesktopFileSystem';
 import HardwareMini from '../widgets/HardwareMini';
 import InstalledSoftwares from '../widgets/InstalledSoftwares';
 import WindowsCMD from '../widgets/WindowsCMD';
+import MediaAccessibility from '../widgets/MediaAccessibility';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -92,6 +93,7 @@ function Home() {
         <HardwareMini />
         <InstalledSoftwares />
         <WindowsCMD />
+        <MediaAccessibility />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { SET_BATTERY_STATUS, SET_COMMAND_LINE, SET_CONFIRM_EXIT_MODAL_TOGGLE, SET_CONFIRM_EXIT_MODAL_TOGGLE_DELAY, SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DATE_TIME, SET_DEFAULT_COMMAND_LINE, SET_DEFAULT_DIRECTORIES, SET_DEFAULT_SHORTCUTS_LIST, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SHORTCUTS_LIST, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from "../types/types"
+import { SET_BATTERY_STATUS, SET_COMMAND_LINE, SET_CONFIRM_EXIT_MODAL_TOGGLE, SET_CONFIRM_EXIT_MODAL_TOGGLE_DELAY, SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DATE_TIME, SET_DEFAULT_COMMAND_LINE, SET_DEFAULT_DIRECTORIES, SET_DEFAULT_SHORTCUTS_LIST, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SHORTCUTS_LIST, SET_SYSTEM_AUTH, SET_SYSTEM_BRIGHTNESS, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT, SET_SYSTEM_VOLUME, SET_TOGGLE_MEDIAACCESSIBILITY } from "../types/types"
 
 
 export const systemauthstate = {
@@ -155,6 +155,38 @@ export const setconfirmexitmodaltoggledelay = (state = false, action) => {
     switch(action.type){
         case SET_CONFIRM_EXIT_MODAL_TOGGLE_DELAY:
             return action.confirmexitmodaltoggledelay;
+        default:
+            return state;
+    }
+}
+
+export const setsystemvolume = (state = 0, action) => {
+    switch(action.type){
+        case SET_SYSTEM_VOLUME:
+            return action.systemvolume;
+        default:
+            return state;
+    }
+}
+
+export const setsystembrightness = (state = 0, action) => {
+    switch(action.type){
+        case SET_SYSTEM_BRIGHTNESS:
+            return action.systembrightness;
+        default:
+            return state;
+    }
+}
+
+export const togglemediaaccessibilitystate = {
+    toggle: false,
+    delay: false,
+}
+
+export const settogglemediaaccessibility = (state = togglemediaaccessibilitystate, action) => {
+    switch(action.type){
+        case SET_TOGGLE_MEDIAACCESSIBILITY:
+            return action.togglemediaaccessibility;
         default:
             return state;
     }

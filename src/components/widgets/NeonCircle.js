@@ -2,7 +2,7 @@ import React from 'react'
 import '../../styles/widgets/NeonCircle.css'
 import { motion } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
-import { SET_CONFIRM_EXIT_MODAL_TOGGLE, SET_CONFIRM_EXIT_MODAL_TOGGLE_DELAY } from '../../redux/types/types'
+import { SET_CONFIRM_EXIT_MODAL_TOGGLE, SET_CONFIRM_EXIT_MODAL_TOGGLE_DELAY, SET_TOGGLE_MEDIAACCESSIBILITY } from '../../redux/types/types'
 
 function NeonCircle() {
 
@@ -20,8 +20,23 @@ function NeonCircle() {
   }
 
   const confirmexitmodal = () => {
+    clearMediaAccessibilityModal()
     setconfirmexitmodaltoggle(true)
     setTimeout(() => { setconfirmexitmodaltoggledelay(true) }, 0)
+  }
+
+  const clearMediaAccessibilityModal = () => {
+    dispatch({type: SET_TOGGLE_MEDIAACCESSIBILITY, togglemediaaccessibility: {
+        toggle: false,
+        delay: true
+    }})
+
+    setTimeout(() => {
+        dispatch({type: SET_TOGGLE_MEDIAACCESSIBILITY, togglemediaaccessibility: {
+            toggle: false,
+            delay: false
+        }})
+    }, 1000)
   }
 
   return (

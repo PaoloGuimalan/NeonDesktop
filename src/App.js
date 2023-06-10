@@ -7,7 +7,7 @@ import store from './redux/store/store';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Splash from './components/main/Splash';
 import { useEffect, useState } from 'react';
-import { SET_BATTERY_STATUS, SET_COMMAND_LINE, SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DEFAULT_DIRECTORIES, SET_DEFAULT_SHORTCUTS_LIST, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SHORTCUTS_LIST, SET_SYSTEM_AUTH, SET_SYSTEM_CMD } from './redux/types/types';
+import { SET_BATTERY_STATUS, SET_COMMAND_LINE, SET_CPU_REGISTERS, SET_CURRENT_PATH, SET_DEFAULT_DIRECTORIES, SET_DEFAULT_SHORTCUTS_LIST, SET_DEVICE_HARDWARES, SET_DIRECTORIES, SET_INSTALLED_SOFTWARES, SET_MEMORY_REGISTERS, SET_SHORTCUTS_LIST, SET_SYSTEM_AUTH, SET_SYSTEM_BRIGHTNESS, SET_SYSTEM_CMD, SET_SYSTEM_VOLUME } from './redux/types/types';
 
 const { app, ipcRenderer } = window.require('electron');
 
@@ -70,19 +70,27 @@ function App() {
                 initBatteryPower().then(() => {
                   initShortcuts().then(() => {
                     getShortcuts().then(() => {
-                      getsystemvolume().then(() => {
-                        initsystemvolume().then(() => {
-                          getInstalledSoftwares().then(() => {
-                            initInstalledSoftwares().then(() => {
-              
-                            }).catch((err) => {  })
+                      getsystembrightness().then(() => {
+                        initsystembrightness().then(() => {
+                          getsystemvolume().then(() => {
+                            initsystemvolume().then(() => {
+                              getInstalledSoftwares().then(() => {
+                                initInstalledSoftwares().then(() => {
+                  
+                                }).catch((err) => {  })
+                              }).catch((err) => {
+                  
+                              })
+                            }).catch((err) => {
+    
+                            })
                           }).catch((err) => {
-              
+    
                           })
-                        }).catch((err) => {
+                        }).catch(() => {
 
                         })
-                      }).catch((err) => {
+                      }).catch(() => {
 
                       })
                     }).catch((err) => {
@@ -122,6 +130,14 @@ function App() {
   const initsystemvolume = async () => {
     ipcRenderer.on("systemvolume", (event, arg) => {
       // console.log(arg)
+      dispatch({type: SET_SYSTEM_VOLUME, systemvolume: arg})
+    })
+  }
+
+  const initsystembrightness = async () => {
+    ipcRenderer.on("systembrightness", (event, arg) => {
+      // console.log(arg)
+      dispatch({type: SET_SYSTEM_BRIGHTNESS, systembrightness: arg})
     })
   }
 
@@ -198,6 +214,10 @@ function App() {
 
   const getsystemvolume = async () => {
     ipcRenderer.send('systemvolume', "init");
+  }
+
+  const getsystembrightness = async () => {
+    ipcRenderer.send('systembrightness', "init");
   }
 
   const initCurrentPath = async () => {

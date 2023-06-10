@@ -2,17 +2,19 @@ import React from 'react'
 import '../../styles/widgets/CircleMenu.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
-import { SET_SYSTEM_CMD } from '../../redux/types/types'
+import { SET_CONFIRM_EXIT_MODAL_TOGGLE, SET_CONFIRM_EXIT_MODAL_TOGGLE_DELAY, SET_SYSTEM_CMD, SET_TOGGLE_MEDIAACCESSIBILITY } from '../../redux/types/types'
 import MenuIcon from '@material-ui/icons/Apps'
 import MapIcon from '@material-ui/icons/Map'
 import FolderIcon from '@material-ui/icons/Folder'
 import UnknownIcon from '@material-ui/icons/BrokenImage'
+import MediaSettingsIcon from '@material-ui/icons/Tune'
 
 const { ipcRenderer } = window.require('electron');
 
 function CircleMenu() {
 
   const systemauth = useSelector(state => state.systemauth)
+  const togglemediaaccessibility = useSelector(state => state.togglemediaaccessibility)
   const dispatch = useDispatch()
 
   var systemcmdreport = (status, report) => {
@@ -22,8 +24,44 @@ function CircleMenu() {
     }})
   }
 
+  const setconfirmexitmodaltoggle = (bool) => {
+    dispatch({type: SET_CONFIRM_EXIT_MODAL_TOGGLE, confirmexitmodaltoggle: bool})
+  }
+
+  const setconfirmexitmodaltoggledelay = (bool) => {
+    dispatch({type: SET_CONFIRM_EXIT_MODAL_TOGGLE_DELAY, confirmexitmodaltoggledelay: bool})
+  }
+
+  const clearShutdownModal = () => {
+    setconfirmexitmodaltoggle(false)
+    setTimeout(() => { setconfirmexitmodaltoggledelay(false) }, 1000)
+  }
+
   const openFile = (path) => {
     ipcRenderer.send('openFile', path)
+  }
+
+  const openMediaAccessibility = () => {
+    clearShutdownModal()
+    if(togglemediaaccessibility.toggle && togglemediaaccessibility.delay){
+        dispatch({type: SET_TOGGLE_MEDIAACCESSIBILITY, togglemediaaccessibility: {
+            toggle: false,
+            delay: true
+        }})
+
+        setTimeout(() => {
+            dispatch({type: SET_TOGGLE_MEDIAACCESSIBILITY, togglemediaaccessibility: {
+                toggle: false,
+                delay: false
+            }})
+        }, 1000)
+    }
+    else{
+        dispatch({type: SET_TOGGLE_MEDIAACCESSIBILITY, togglemediaaccessibility: {
+            toggle: true,
+            delay: true
+        }})
+    }
   }
 
   const defaultCircleMenuIterable = [
@@ -46,10 +84,10 @@ function CircleMenu() {
       action: () => { openFile("C:\\") }
     },
     {
-      available: false,
-      title: "Unavailable",
-      component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
-      action: () => { systemcmdreport("error", "Module Unavailable") }
+      available: true,
+      title: "Media and Accessibility",
+      component: <MediaSettingsIcon style={{color: "white", fontSize: "35px"}} />,
+      action: () => { openMediaAccessibility() }
     },
     {
       available: false,

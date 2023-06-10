@@ -38,7 +38,7 @@ function DateTimeBattery() {
                   <BatteryNotCharging style={{fontSize: "25px", color: "white"}} />
                 )
               )}
-              <p id='p_batterylevel_label'>{batterystatus.percentage.toFixed(0)}% {batterystatus.power? "Charging" : "On Battery"}</p>
+              <p id='p_batterylevel_label'>{batterystatus.percentage.toFixed(0)}% {batterystatus.power? batterystatus.percentage == 100? "Charged" : "Charging" : "On Battery"}</p>
             </div>
             <div id='div_battery_level_bar_outer'>
               <motion.div

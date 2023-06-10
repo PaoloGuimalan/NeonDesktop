@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from 'redux'
-import { setbatterystatus, setcommandline, setconfirmexitmodaltoggle, setconfirmexitmodaltoggledelay, setcpuregisters, setcurrentpath, setdatetime, setdevicehardwares, setdirectories, setinstalledsoftwares, setmemoryregisters, setshortcutslist, setsystemauth, setsystemcmd } from '../actions/actions';
+import { setbatterystatus, setcommandline, setconfirmexitmodaltoggle, setconfirmexitmodaltoggledelay, setcpuregisters, setcurrentpath, setdatetime, setdevicehardwares, setdirectories, setinstalledsoftwares, setmemoryregisters, setshortcutslist, setsystemauth, setsystembrightness, setsystemcmd, setsystemvolume, settogglemediaaccessibility } from '../actions/actions';
 
 const combiner = combineReducers({
     systemauth: setsystemauth,
@@ -15,7 +15,10 @@ const combiner = combineReducers({
     shortcutslist: setshortcutslist,
     batterystatus: setbatterystatus,
     confirmexitmodaltoggle: setconfirmexitmodaltoggle,
-    confirmexitmodaltoggledelay: setconfirmexitmodaltoggledelay
+    confirmexitmodaltoggledelay: setconfirmexitmodaltoggledelay,
+    systemvolume: setsystemvolume,
+    systembrightness: setsystembrightness,
+    togglemediaaccessibility: settogglemediaaccessibility
 })
 
 const store = createStore(combiner);
