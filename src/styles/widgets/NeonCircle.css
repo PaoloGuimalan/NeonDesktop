@@ -1,0 +1,86 @@
+@font-face {
+    font-family: 'NeonCal';
+    src: url('../../resources/fonts/Android101-El3e.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#div_neon_interface_home{
+    background-color: transparent;
+    width: 90%;
+    height: 90%;
+    max-width: 210px;
+    max-height: 210px;
+    border-radius: 210px;
+    border: solid 3px transparent;
+    box-shadow: 0px 0px 30px transparent, inset 0px 0px 70px transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    /* scale: 0; */
+}
+
+#div_inner_neon_home{
+    background-color: transparent;
+    width: 95%;
+    height: 95%;
+    max-width: 180px;
+    max-height: 180px;
+    border-radius: 180px;
+    border-top: solid 5px transparent;
+    border-left: solid 5px transparent;
+    border-right: solid 5px transparent;
+    border-bottom: solid 5px transparent;
+    border-right-style: dashed;
+    border-bottom-style: dashed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* box-shadow: -10px 0px 30px white, inset 7px 7px 15px white; */
+}
+
+#div_inner2_neon_home{
+    background-color: transparent;
+    width: 95%;
+    height: 95%;
+    max-width: 155px;
+    max-height: 155px;
+    border-radius: 155px;
+    border-top: solid 5px white;
+    border-left: solid 5px white;
+    border-right: solid 5px white;
+    border-bottom: solid 5px white;
+    border-top-style: dashed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* box-shadow: -10px 0px 30px white, inset 7px 7px 15px white; */
+}
+
+#div_neon_stable_inner_home{
+    background-color: transparent;
+    width: 95%;
+    height: 95%;
+    max-width: 130px;
+    max-height: 130px;
+    border-radius: 130px;
+    border-top: solid 0px white;
+    border-left: solid 0px white;
+    border-right: solid 0px white;
+    border-bottom: solid 0px white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    /* border-style: dashed; */
+}
+
+#p_label_neon_home{
+    color: grey;
+    position: absolute;
+    font-size: 20px;
+    font-family: NeonCal;
+    text-shadow: 0px 0px 10px transparent;
+    cursor: pointer;
+}

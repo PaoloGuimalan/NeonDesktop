@@ -6,32 +6,19 @@ import FolderIcon from '@material-ui/icons/Folder'
 import FileIcon from '@material-ui/icons/InsertDriveFile'
 import ExeIcon from '@material-ui/icons/SaveRounded'
 import UnknownIcon from '@material-ui/icons/BrokenImage'
-import BatteryNotCharging from '@material-ui/icons/BatteryStd'
-import BatteryCharging from '@material-ui/icons/BatteryChargingFull'
-import BatteryAlert from '@material-ui/icons/BatteryAlert'
 import MenuIcon from '@material-ui/icons/Apps'
 import MapIcon from '@material-ui/icons/Map'
-import { SET_COMMAND_LINE, SET_CURRENT_PATH, SET_DATE_TIME, SET_DEFAULT_COMMAND_LINE, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from '../../redux/types/types';import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import { SET_COMMAND_LINE, SET_CONFIRM_EXIT_MODAL_TOGGLE, SET_CONFIRM_EXIT_MODAL_TOGGLE_DELAY, SET_CURRENT_PATH, SET_DATE_TIME, SET_DEFAULT_COMMAND_LINE, SET_SYSTEM_AUTH, SET_SYSTEM_CMD, SET_SYSTEM_CMD_DEFAULT } from '../../redux/types/types';
+import NeonCircle from '../widgets/NeonCircle';
+import DateTimeBattery from '../widgets/DateTimeBattery';
+import CircleMenu from '../widgets/CircleMenu';
+import ShutdownModal from '../widgets/ShutdownModal';
+import Shortcuts from '../widgets/Shortcuts';
+import SystemCMD from '../widgets/SystemCMD';
+import DesktopFileSystem from '../widgets/DesktopFileSystem';
+import HardwareMini from '../widgets/HardwareMini';
+import InstalledSoftwares from '../widgets/InstalledSoftwares';
+import WindowsCMD from '../widgets/WindowsCMD';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -51,71 +38,16 @@ function Home() {
   const batterystatus = useSelector(state => state.batterystatus)
   const dispatch = useDispatch()
 
-  const [confirmexitmodaltoggle, setconfirmexitmodaltoggle] = useState(false)
-
-  const defaultCircleMenuIterable = [
-    {
-      available: true,
-      title: "Menu",
-      component: <MenuIcon style={{color: "white", fontSize: "35px"}} />,
-      action: () => { systemcmdreport("warning","Menu still in development") }
-    },
-    {
-      available: true,
-      title: "Map",
-      component: <MapIcon style={{color: "white", fontSize: "35px"}} />,
-      action: () => { systemcmdreport("warning","Map still in development") }
-    },
-    {
-      available: true,
-      title: "File Explorer",
-      component: <FolderIcon style={{color: "white", fontSize: "35px"}} />,
-      action: () => { openFile("C:\\") }
-    },
-    {
-      available: false,
-      title: "Unavailable",
-      component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
-      action: () => { systemcmdreport("error", "Module Unavailable") }
-    },
-    {
-      available: false,
-      title: "Unavailable",
-      component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
-      action: () => {  systemcmdreport("error", "Module Unavailable")}
-    },
-    {
-      available: false,
-      title: "Unavailable",
-      component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
-      action: () => { systemcmdreport("error", "Module Unavailable") }
-    },
-    {
-      available: false,
-      title: "Unavailable",
-      component: <UnknownIcon style={{color: "grey", fontSize: "35px"}} />,
-      action: () => {  systemcmdreport("error", "Module Unavailable")}
-    }
-  ]
+  // const [confirmexitmodaltoggle, setconfirmexitmodaltoggle] = useState(false)
+  // const [confirmexitmodaltoggledelay, setconfirmexitmodaltoggledelay] = useState(false);
 
   // const [datetime, setdatetime] = useState({
   //   time: "",
   //   date: ""
   // });
 
-  const systemcmdref = useRef(null)
-  const cmdrref = useRef(null)
-
-  useEffect(() => {
-    setTimeout(() => {
-      initcmdwelcomemessage()
-    },6000)
-  },[])
-
-  const initcmdwelcomemessage = () => {
-    var message = "<h1>Welcome, System is now ready for use.</h1> \n Neon Desktop Beta version 1.1.0";
-    dispatch({type: SET_COMMAND_LINE, commandline: message.replace(/(?:\r\n|\r|\n)/g, '<br>')})
-  }
+  // const systemcmdref = useRef(null)
+  // const cmdrref = useRef(null
 
   var systemcmdreport = (status, report) => {
     dispatch({type: SET_SYSTEM_CMD, systemcmd: {
@@ -124,63 +56,9 @@ function Home() {
     }})
   }
 
-  useEffect(() => {
-    systemcmdref.current.scrollTop = systemcmdref.current.scrollHeight
-  },[systemcmd])
-
-  useEffect(() => {
-    cmdrref.current.scrollTop = cmdrref.current.scrollHeight
-    // console.log(commandline)
-  },[commandline])
-
-  const getData = (dirLink) => {
-    ipcRenderer.send('dirList', dirLink);
-  };
-
-  const openFile = (path) => {
-    ipcRenderer.send('openFile', path)
-  }
-
-  const executeCommandPrompt = (command) => {
-    ipcRenderer.send('executeCommand', command)
-  }
-
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      // console.log('do validate')
-      if(event.target.value.split("").length != 0){
-        if(event.target.value == "cls"){
-          dispatch({type: SET_DEFAULT_COMMAND_LINE, commandline: []})
-        }
-        else if(event.target.value == "init"){
-          initcmdwelcomemessage()
-        }
-        else{
-          executeCommandPrompt(event.target.value)
-        }
-      }
-      event.currentTarget.value = "";
-    }
-  }
-
-  const goToPath = (path) => {
-    var currentPath = currentDir;
-    var newPath = currentPath.split("\\").length == 1? `${currentDir}${path}` : `${currentDir}\\${path}`
-    dispatch({type: SET_CURRENT_PATH, currentpath: newPath})
-    dispatch({type: SET_SYSTEM_CMD, systemcmd: `Entered ${newPath}`})
-    getData(newPath)
-  }
-
-  const goBackPath = () => {
-    var currentPath = currentDir.split("\\")
-    var poppedPath = currentPath.length == 1? currentPath : currentPath.pop()
-    var finalNewPath = currentPath.length == 1? `${currentPath.join("")}\\` : currentPath.join("\\")
-    dispatch({type: SET_CURRENT_PATH, currentpath: finalNewPath})
-    dispatch({type: SET_SYSTEM_CMD, systemcmd: `Returned to ${finalNewPath}`})
-    if(currentPath.length > 1){
-      getData(finalNewPath)
-    }
-  }
+  // useEffect(() => {
+  //   systemcmdref.current.scrollTop = systemcmdref.current.scrollHeight
+  // },[systemcmd])
 
   useEffect(() => {
     setInterval(showTime, 1000)
@@ -202,445 +80,18 @@ function Home() {
     }})
   }
 
-  const options = {
-    maintainAspectRatio: false,
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-        labels:{
-          color: "white"
-        }
-      }
-    },
-    scales: {
-      y: {
-          max: 100,
-          min: 0,
-          ticks: {
-              stepSize: 10,
-              color: "white"
-          }
-      }
-    }
-  };
-
-  const labels = cpuregisters.map((cpur, i) => cpur.time)
-
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: 'CPU',
-        data: cpuregisters.map((cpur, i) => cpur.register),
-        borderColor: 'cyan',
-        backgroundColor: 'cyan',
-      },
-      {
-        label: 'Memory',
-        data: memoryregisters.map((cpur, i) => cpur.register),
-        borderColor: 'orange',
-        backgroundColor: 'orange',
-      }
-    ],
-  }
-
-  const confirmexitmodal = () => {
-    setconfirmexitmodaltoggle(true)
-  }
-
-  const exitNeonDesktop = () => {
-    setconfirmexitmodaltoggle(false)
-    dispatch({type: SET_SYSTEM_AUTH, systemauth: {
-      status: false,
-      enabled: true,
-    }})
-    setTimeout(() => {
-      dispatch({type: SET_SYSTEM_AUTH, systemauth: {
-        status: false,
-        enabled: false,
-      }})
-    }, 5000)
-    setTimeout(() => {
-      dispatch({type: SET_SYSTEM_CMD_DEFAULT, systemcmd: []})
-      executeCommandPrompt("shutdown -s -t 3")
-      // ipcRenderer.send("closeApp", "")
-    }, 6000)
-  }
-
   return (
     <div id='div_home'>
-        <motion.div
-        initial={{
-          scale: 0
-        }}
-        animate={{
-            border: systemauth.enabled? "solid 3px white" : "solid 3px transparent",
-            boxShadow: systemauth.enabled? "0px 0px 30px white, inset 0px 0px 70px white" : "0px 0px 30px transparent, inset 0px 0px 70px transparent",
-            scale: 1
-        }}
-        transition={{
-            duration: 1,
-            delay: 0
-        }}
-        id='div_neon_interface_home'>
-            <motion.div
-            animate={systemauth.enabled? {
-                rotate: 360,
-                borderTop: "solid 5px white",
-                borderLeft: "solid 5px white",
-                borderRight: "solid 5px white",
-                borderBottom: "solid 5px white",
-                borderRightStyle: "dashed",
-                borderBottomStyle: "dashed"
-            } : {
-                borderTop: "solid 5px transparent",
-                borderLeft: "solid 5px transparent",
-                borderRight: "solid 5px transparent",
-                borderBottom: "solid 5px transparent",
-                borderRightStyle: "dashed",
-                borderBottomStyle: "dashed"
-            }}
-            transition={{
-                duration: 5,
-                repeat: Infinity
-            }}
-            id='div_inner_neon_home'>
-                <motion.div
-                animate={systemauth.enabled? {
-                    rotate: -360,
-                    borderTop: "solid 5px white",
-                    borderLeft: "solid 5px white",
-                    borderRight: "solid 5px white",
-                    borderBottom: "solid 5px white",
-                    borderRightStyle: "dashed",
-                    borderBottomStyle: "dashed"
-                } : {
-                    borderTop: "solid 5px transparent",
-                    borderLeft: "solid 5px transparent",
-                    borderRight: "solid 5px transparent",
-                    borderBottom: "solid 5px transparent",
-                    borderRightStyle: "dashed",
-                    borderBottomStyle: "dashed"
-                }}
-                transition={{
-                    duration: 3,
-                    repeat: Infinity
-                }}
-                id='div_inner2_neon_home'>
-                </motion.div>
-            </motion.div>
-            <motion.p
-            animate={{
-                color: systemauth.enabled? "white" : "grey",
-                textShadow: systemauth.enabled? "0px 0px 10px white" : "0px 0px 10px transparent"
-            }}
-            id='p_label_neon_home' onClick={() => { confirmexitmodal() }}>NEON</motion.p>
-        </motion.div>
-        <motion.div
-        animate={{
-          left: systemauth.status? "5px" : "-100%"
-        }}
-        transition={{
-          duration: 1,
-          delay: 0
-        }}
-        id='div_top_header'>
-          <div id='div_datetime_header'>
-            <p id='p_time_label'>{datetime.time}</p>
-            <p id='p_date_label'>{datetime.date}</p>
-          </div>
-          <div id='div_battery_container'>
-            <div id='div_battery_icon_label'>
-              {batterystatus.power? (
-                <BatteryCharging style={{fontSize: "25px", color: "white"}} />
-              ) : (
-                batterystatus.percentage <= 20? (
-                  <BatteryAlert style={{fontSize: "25px", color: "white"}} />
-                ) : (
-                  <BatteryNotCharging style={{fontSize: "25px", color: "white"}} />
-                )
-              )}
-              <p id='p_batterylevel_label'>{batterystatus.percentage.toFixed(0)}% {batterystatus.power? "Charging" : "On Battery"}</p>
-            </div>
-            <div id='div_battery_level_bar_outer'>
-              <motion.div
-              animate={{
-                width: `${batterystatus.percentage}%`
-              }}
-              id='div_battery_level_bar_inner'></motion.div>
-            </div>
-          </div>
-        </motion.div>
-        <motion.div
-        animate={{
-          rotate: -360,
-          scale: systemauth.status? 1 : 0
-        }}
-        transition={{
-          delay: systemauth.status? 1 : 0,
-          duration: 50,
-          repeat: Infinity
-        }}
-        id='div_circle_menu'>
-          {defaultCircleMenuIterable.map((btns, i) => {
-            return(
-              <motion.button
-              title={btns.title}
-              onClick={btns.action}
-              initial={{
-                left: (50 - 50*Math.cos(-0.5 * Math.PI - 2*(1/defaultCircleMenuIterable.length)*i*Math.PI)).toFixed(4) + "%",
-                top: (50 - 50*Math.sin(-0.5 * Math.PI - 2*(1/defaultCircleMenuIterable.length)*i*Math.PI)).toFixed(4) + "%",
-                scale: 0
-              }}
-              animate={{
-                scale: systemauth.status? 1 : 0,
-                opacity: btns.available? 1 : 0.8
-              }}
-              transition={{
-                delay: 1,
-                duration: 1
-              }}
-              className='btns_circle_menu'>
-                <motion.div
-                animate={{
-                  rotate: 360,
-                  boxShadow: btns.available? "0px 0px 10px white, inset 0px 0px 50px white" : "0px 0px 10px red, inset 0px 0px 50px red"
-                }}
-                transition={{
-                  delay: 0,
-                  duration: 50,
-                  repeat: Infinity
-                }}
-                className='div_circle_btn_holder'>
-                  {btns.component}
-                </motion.div>
-              </motion.button>
-            )
-          })}
-        </motion.div>
-        <motion.div
-        animate={{
-          bottom: confirmexitmodaltoggle? "5px" : "-1000px"
-        }}
-        transition={{
-          duration: 0.4
-        }}
-        id='div_confirmexit_container'>
-          <div id='div_confirmexit_header'>
-            <p id='p_confirmexit_label'>Warning</p>
-          </div>
-          <div id='div_confirmexit_body'>
-            <p id='div_confirmexit_body_content'>Are you sure you want to execute system shutdown?</p>
-          </div>
-          <div id='div_confirmexit_navigations'>
-            <button className='btn_confirmexit' onClick={() => { exitNeonDesktop() }}>Proceed</button>
-            <button className='btn_confirmexit' onClick={() => { setconfirmexitmodaltoggle(false) }}>Cancel</button>
-          </div>
-        </motion.div>
-        <motion.div
-        animate={{
-          top: systemauth.status? "5px" : "-100%"
-        }}
-        transition={{
-          duration: 1,
-          delay: systemauth.status? 3 : 0
-        }}
-        id='div_shortcut_widget'>
-          <div id='div_shortcut_container'>
-            <div id='div_shortcut_header'>
-              <p id='p_shortcut_header_label'>Shortcuts</p>
-            </div>
-            <div id='div_shortcut_list'>
-              {shortcutslist.map((scl, i) => {
-                if(scl.isDirectory){
-                  return(
-                    <div key={i} title={scl.fileName} className='div_shortcuts_template' onClick={() => { goToPath(scl.fileName) }}>
-                      <FolderIcon style={{color: "black", fontSize: "35px"}} />
-                      {/* <img src={scl.icon} /> */}
-                      <p className='p_folder_shortcut_label'>{scl.fileName}</p>
-                    </div>
-                  )
-                }
-                else if(scl.isFile){
-                  return(
-                    <div key={i} title={scl.fileName} className='div_shortcuts_template' onClick={() => { openFile(scl.filepath) }}>
-                      <FileIcon style={{color: "black", fontSize: "35px"}} />
-                      {/* <img src={scl.icon} className='img_files_indicator' /> */}
-                      <p className='p_folder_shortcut_label'>{scl.fileName}</p>
-                    </div>
-                  )
-                }
-                else{
-                    <div key={i} title={scl.fileName} className='div_shortcuts_template' onClick={() => {  }}>
-                      <UnknownIcon style={{color: "black", fontSize: "35px"}} />
-                      {/* <img src={scl.icon} className='img_files_indicator' /> */}
-                      <p className='p_folder_shortcut_label'>{scl.fileName}</p>
-                    </div>
-                }
-              })}
-            </div>
-          </div>
-          {/* <div id='div_slanted_status_container'>
-            <div id='div_battery_icon_container'>
-              {batterystatus.power? (
-                <BatteryCharging style={{fontSize: "25px", color: "white"}} />
-              ) : (
-                batterystatus.percentage <= 20? (
-                  <BatteryAlert style={{fontSize: "25px", color: "white"}} />
-                ) : (
-                  <BatteryNotCharging style={{fontSize: "25px", color: "white"}} />
-                )
-              )}
-              <p id='p_batterylevel_label'>{batterystatus.percentage.toFixed(0)}%</p>
-            </div>
-            <div id='div_battery_level_bar_container'>
-              <div id='div_battery_level_bar_outer'>
-                  <motion.div
-                  animate={{
-                    height: batterystatus.percentage
-                  }}
-                  id='div_battery_level_bar_inner'></motion.div>
-              </div>
-            </div>
-          </div> */}
-        </motion.div>
-        <motion.div
-        animate={{
-          left: systemauth.status? "5px" : "-100%"
-        }}
-        transition={{
-          duration: 1,
-          delay: 0.5
-        }}
-        id='div_system_cmd'>
-          <div id='div_inner_system_cmd' ref={systemcmdref}>
-            {systemcmd.map((scmd, i) => {
-              return(
-                <motion.p
-                animate={{
-                  color: scmd.status == "normal"? "white" : scmd.status == "success"? "lime" : scmd.status == "warning" ? "orange" : scmd.status == "error"? "red" : "normal"
-                }}
-                key={i} id='p_system_cmd'>{scmd.report}</motion.p>
-              )
-            })}
-          </div>
-        </motion.div>
-        <motion.div
-        animate={{
-          left: systemauth.status? "5px" : "-100%"
-        }}
-        transition={{
-          duration: 1,
-          delay: 1
-        }}
-        id='div_file_system'>
-          <div id='div_fs_header'>
-            <p id='p_fs_label'>File System</p>
-            <p id='p_fs_path_label'>{currentDir}</p>
-          </div>
-          <div id='div_fs_content'>
-            <div className='div_folder_template' onClick={() => { goBackPath() }}>
-              <FolderIcon style={{color: "white", fontSize: "35px"}} />
-              <p className='p_folder_label'>..</p>
-            </div>
-            {directories.map((dr, i) => {
-              if(dr.isDirectory){
-                return(
-                  <div key={i} className='div_folder_template' onClick={() => { goToPath(dr.fileName) }}>
-                    <FolderIcon style={{color: "white", fontSize: "35px"}} />
-                    {/* <img src={dr.icon} /> */}
-                    <p className='p_folder_label'>{dr.fileName}</p>
-                  </div>
-                )
-              }
-              else if(dr.isFile){
-                return(
-                  <div key={i} className='div_folder_template' onClick={() => { openFile(dr.filepath) }}>
-                    {/* <FileIcon style={{color: "white", fontSize: "35px"}} /> */}
-                    <img src={dr.icon} className='img_files_indicator' />
-                    <p className='p_folder_label'>{dr.fileName}</p>
-                  </div>
-                )
-              }
-              else{
-                  <div key={i} className='div_folder_template' onClick={() => {  }}>
-                    <UnknownIcon style={{color: "white", fontSize: "35px"}} />
-                    {/* <img src={dr.icon} className='img_files_indicator' /> */}
-                    <p className='p_folder_label'>{dr.fileName}</p>
-                  </div>
-              }
-            })}
-          </div>
-        </motion.div>
-        <motion.div
-        animate={{
-          right: systemauth.status? "5px" : "-1000px"
-        }}
-        transition={{
-          duration: 1,
-          delay: 1.5
-        }}
-        id='div_hardware_usage'>
-          <div id='div_hu_header'>
-            <p id='p_fs_label'>Hardwares</p>
-          </div>
-          <div id='div_graph_container'>
-            <Line options={options} data={data} />
-          </div>
-        </motion.div>
-        <motion.div
-        animate={{
-          right: systemauth.status? "5px" : "-1000px"
-        }}
-        transition={{
-          duration: 1,
-          delay: 2
-        }}
-        id='div_installed_softwares'>
-          <div id='div_hu_header'>
-            <p id='p_fs_label'>Softwares</p>
-          </div>
-          <div id='div_is_content'>
-            {installedsoftwares.filter((fl, i) => fl.DisplayIcon).map((isf, i) => {
-              if(isf.DisplayName){
-                if(isf.DisplayIcon.includes(".exe")){
-                  return(
-                    <div key={i} title={isf.DisplayName} className='div_folder_template' onClick={() => { openFile(isf.DisplayIcon.split(",")[0]) }}>
-                      <ExeIcon style={{color: "white", fontSize: "35px"}} />
-                      <p className='p_folder_label'>{isf.DisplayName}</p>
-                    </div>
-                  )
-                }
-              }
-            })}
-          </div>
-        </motion.div>
-        <motion.div
-        animate={{
-          right: systemauth.status? "5px" : "-1000px"
-        }}
-        transition={{
-          duration: 1,
-          delay: 2.5
-        }}
-        id='div_windows_cmd'>
-          <div id='div_cmdr_header'>
-            <p id='p_cmdr_label'>Command Line</p>
-          </div>
-          <div id='div_cmdr_container' ref={cmdrref}>
-            {commandline.map((cmdr, i) => {
-              return(
-                <div key={i} className='p_cmdr_format' dangerouslySetInnerHTML={{__html: cmdr}}></div>
-              )
-            })}
-            <div id='div_cmd_input_container'>
-              <p id='p_cmd_prompt_label'>Neon&gt;</p>
-              <input type='text' onKeyDown={handleKeyDown} id='input_cmd_prompt' />
-            </div>
-          </div>
-          <div id='div_cmdr_footer'></div>
-        </motion.div>
+        <NeonCircle />
+        <DateTimeBattery />
+        <CircleMenu />
+        <ShutdownModal />
+        <Shortcuts />
+        <SystemCMD />
+        <DesktopFileSystem />
+        <HardwareMini />
+        <InstalledSoftwares />
+        <WindowsCMD />
     </div>
   )
 }

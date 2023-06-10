@@ -11,6 +11,7 @@ const osf = require("os")
 const getPath = require("platform-folders")
 
 const powerMonitor = require("electron").powerMonitor
+const { audio, display } = require("system-control")
 
 const fetchInstalledSoftware = require("fetch-installed-software");
 const { electron } = require('process');
@@ -209,6 +210,19 @@ ipcMain.on('executeCommand', (event, arg) => {
 
 ipcMain.on('openFile', (event, arg) => {
   shell.openPath(arg)
+})
+
+ipcMain.on('systemvolume', (event, arg) => {
+  if(arg == "init"){
+    const getvolume = audio.volume()
+    console.log(`from init ${getvolume}`)
+    event.sender.send('systemvolume', getvolume)
+  }
+  else{
+    const setvolume = audio.volume(arg)
+    console.log(`from set ${setvolume}`)
+    event.sender.send('systemvolume', setvolume)
+  }
 })
 
 powerMonitor.on('on-ac', () => {

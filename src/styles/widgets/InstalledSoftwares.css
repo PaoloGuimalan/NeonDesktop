@@ -1,0 +1,73 @@
+@font-face {
+    font-family: 'NeonCal';
+    src: url('../../resources/fonts/Android101-El3e.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#div_installed_softwares{
+    background-color: rgba(40, 40, 40, 0.5);
+    position: absolute;
+    top: 250px;
+    /* right: 5px; */
+    /* right: -100%; */
+    right: -1000px;
+    width: calc(50% - 20px);
+    height: calc(100% - 600px);
+    max-width: 330px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#div_hu_header{
+    width: 100%;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+}
+
+#p_fs_label{
+    color: white;
+    font-family: NeonCal;
+    font-size: 15px;
+    margin: 0px;
+}
+
+#div_is_content{
+    background-color: transparent;
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1;
+    justify-content: space-between;
+    overflow-y: scroll;
+}
+
+.div_folder_template{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: transparent;
+    height: 70px;
+    width: 70px;
+    cursor: pointer;
+}
+
+.p_folder_label{
+    color: white;
+    margin: 0px;
+    font-size: 12px;
+    text-align: center;
+    width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    /* font-family: NeonCal; */
+}

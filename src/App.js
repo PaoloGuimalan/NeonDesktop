@@ -70,12 +70,20 @@ function App() {
                 initBatteryPower().then(() => {
                   initShortcuts().then(() => {
                     getShortcuts().then(() => {
-                      getInstalledSoftwares().then(() => {
-                        initInstalledSoftwares().then(() => {
-          
-                        }).catch((err) => {  })
+                      getsystemvolume().then(() => {
+                        initsystemvolume().then(() => {
+                          getInstalledSoftwares().then(() => {
+                            initInstalledSoftwares().then(() => {
+              
+                            }).catch((err) => {  })
+                          }).catch((err) => {
+              
+                          })
+                        }).catch((err) => {
+
+                        })
                       }).catch((err) => {
-          
+
                       })
                     }).catch((err) => {
   
@@ -109,6 +117,12 @@ function App() {
       }).catch((err) => {
 
       })
+  }
+
+  const initsystemvolume = async () => {
+    ipcRenderer.on("systemvolume", (event, arg) => {
+      // console.log(arg)
+    })
   }
 
   const initCPU = async () => {
@@ -182,6 +196,10 @@ function App() {
     setTimeout(() => {systemcmdreport("normal","Scanning Desktop Shortcuts ...")}, 1500)
   }
 
+  const getsystemvolume = async () => {
+    ipcRenderer.send('systemvolume', "init");
+  }
+
   const initCurrentPath = async () => {
     setTimeout(() => {systemcmdreport("normal","Scanning Drive C ...")}, 1500)
     dispatch({type: SET_CURRENT_PATH, currentpath: "C:\\"})
@@ -218,7 +236,14 @@ function App() {
         dispatch({type: SET_INSTALLED_SOFTWARES, installedsoftwares: arg})
         setTimeout(() => {systemcmdreport("normal",`${arg.length} Installed Softwares detected`)}, 1500)
         arg.map((dr, i) => {
-          setTimeout(() => {systemcmdreport("normal",`${dr.DisplayName} software scanned`)}, 1500)
+          setTimeout(() => {
+            if(dr.DisplayName){
+              systemcmdreport("normal",`${dr.DisplayName} software scanned`)
+            }
+            else{
+              systemcmdreport("error",`${dr.DisplayName} software scanned`)
+            }
+          }, 1500)
         })
         setTimeout(() => {systemcmdreport("success",`System Setup Complete`)}, 1500)
     })
